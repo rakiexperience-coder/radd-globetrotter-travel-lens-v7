@@ -1,105 +1,95 @@
-import React, { useState, useEffect } from 'react';
-
-const PASSWORD = 'RADDVIP';
-const STORAGE_KEY = 'globetrotter_vip_access';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface LicenseGateProps {
-  onUnlock: () => void;
+    onUnlock: () => void;
 }
 
-const LicenseGate: React.FC<LicenseGateProps> = ({ onUnlock }) => {
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+export const LicenseGate: React.FC<LicenseGateProps> = ({ onUnlock }) => {
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (localStorage.getItem(STORAGE_KEY) === 'granted') {
-      onUnlock();
-    }
-  }, [onUnlock]);
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (password === 'RADDVIP') {
+            localStorage.setItem('globetrotter_vip_auth', 'true');
+            onUnlock();
+        } else {
+            setError('Incorrect password. Please try again.');
+        }
+    };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === PASSWORD) {
-      localStorage.setItem(STORAGE_KEY, 'granted');
-      onUnlock();
-    } else {
-      setError('Incorrect password. Please try again.');
-    }
-  };
+    return (
+        <div className="relative min-h-screen w-full flex items-center justify-center bg-neutral-950 overflow-hidden px-4">
+            <div 
+                className="absolute inset-0 bg-cover bg-center brightness-[0.3] contrast-[1.15]" 
+                style={{ 
+                    backgroundImage: 'url("https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1920&auto=format&fit=crop")',
+                }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-neutral-950/75 z-0" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#a4823f]/10 rounded-full blur-[120px] pointer-events-none z-0" />
 
-  return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 30%, #16213e 60%, #0f3460 100%)',
-      backgroundImage: 'url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80")',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontFamily: "'Segoe UI', sans-serif",
-    }}>
-      <div style={{
-        background: 'rgba(255,255,255,0.08)',
-        backdropFilter: 'blur(20px)',
-        borderRadius: '20px',
-        padding: '48px 40px',
-        width: '360px',
-        border: '1px solid rgba(255,255,255,0.15)',
-        boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
-        textAlign: 'center',
-      }}>
-        <div style={{
-          width: '64px', height: '64px', borderRadius: '50%',
-          background: 'linear-gradient(135deg, #C9A84C, #F0D080)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 24px', fontSize: '28px',
-        }}>G</div>
+            <motion.div 
+                initial={{ opacity: 0, y: 15 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="relative z-10 w-full max-w-sm bg-neutral-900/65 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl overflow-hidden"
+            >
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#a4823f] to-transparent" />
+                
+                <div className="text-center mb-8">
+                    <div className="mx-auto w-12 h-12 rounded-full border border-[#a4823f]/50 flex items-center justify-center mb-4 bg-[#a4823f]/10 text-[#a4823f]">
+                        <span className="font-serif text-lg font-bold tracking-widest">G</span>
+                    </div>
+                    <h1 className="text-2xl font-serif font-semibold tracking-wider text-white mb-2">
+                        GLOBETROTTER
+                    </h1>
+                    <p className="text-xs font-poppins text-neutral-400 tracking-wide uppercase">
+                        Travel Lens VIP Access
+                    </p>
+                </div>
 
-        <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: 700, letterSpacing: '3px', margin: '0 0 8px' }}>
-          GLOBETROTTER
-        </h1>
-        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', letterSpacing: '2px', margin: '0 0 32px' }}>
-          TRAVEL LENS VIP ACCESS
-        </p>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="space-y-2">
+                        <label className="block text-xs font-poppins font-medium text-neutral-300 tracking-wider uppercase text-left">
+                            Access Code
+                        </label>
+                        <input
+                            type="text"
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                if (error) setError(null);
+                            }}
+                            placeholder="Enter Password"
+                            className="w-full px-5 py-3.5 bg-neutral-950/85 border border-white/10 rounded-xl text-white placeholder-neutral-500 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-[#a4823f]/60 focus:border-[#a4823f]/60 transition-all font-mono"
+                            autoFocus
+                        />
+                    </div>
 
-        <form onSubmit={handleSubmit}>
-          <label style={{ display: 'block', color: 'rgba(255,255,255,0.6)', fontSize: '11px', letterSpacing: '2px', textAlign: 'left', marginBottom: '8px' }}>
-            ACCESS CODE
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={e => { setPassword(e.target.value); setError(''); }}
-            placeholder="Enter Password"
-            style={{
-              width: '100%', padding: '14px 16px', borderRadius: '10px',
-              background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
-              color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box',
-              marginBottom: '16px',
-            }}
-          />
-          {error && (
-            <p style={{ color: '#ff6b6b', fontSize: '13px', marginBottom: '12px' }}>{error}</p>
-          )}
-          <button
-            type="submit"
-            style={{
-              width: '100%', padding: '14px', borderRadius: '10px',
-              background: 'linear-gradient(135deg, #C9A84C, #F0D080)',
-              border: 'none', color: '#1a1a1a', fontSize: '15px',
-              fontWeight: 700, cursor: 'pointer', letterSpacing: '1px',
-            }}
-          >
-            Submit
-          </button>
-        </form>
-        <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: '11px', marginTop: '20px' }}>
-          Default VIP Code required
-        </p>
-      </div>
-    </div>
-  );
+                    {error && (
+                        <motion.p 
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            className="text-red-400 font-poppins text-xs text-center leading-normal"
+                        >
+                            {error}
+                        </motion.p>
+                    )}
+
+                    <button
+                        type="submit"
+                        className="w-full py-3 px-6 rounded-xl bg-[#a4823f] hover:bg-[#8f7338] text-white font-poppins font-semibold tracking-wider text-sm shadow-lg shadow-[#a4823f]/10 transition-all duration-300 active:scale-[0.98]"
+                    >
+                        Submit
+                    </button>
+                    
+                    <p className="text-[10px] text-center text-neutral-500 font-sans tracking-wide">
+                        Default VIP Code required.
+                    </p>
+                </form>
+            </motion.div>
+        </div>
+    );
 };
-
-export default LicenseGate;
